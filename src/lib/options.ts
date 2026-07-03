@@ -17,7 +17,7 @@ export const AGE_OPTIONS: SelectOption[] = [
   { value: "25-29", label: "25〜29歳", adj: 0.03 },
   { value: "30-34", label: "30〜34歳", adj: 0.04 },
   { value: "35-40", label: "35〜40歳", adj: 0.05 },
-  { value: "41-50", label: "41〜50歳", adj: 0.02 },
+  { value: "41-50", label: "41〜50歳", adj: 0.01 },
   { value: "51+", label: "51歳以上", adj: 0 },
 ];
 
@@ -58,4 +58,4 @@ export const REASON_OPTIONS: SelectOption[] = [
 ];
 
 /** 転職理由による補正の上限 */
-export const REASON_ADJ_CAP = 0.04;
+export const REASON_ADJ_CAP = 0.03;
