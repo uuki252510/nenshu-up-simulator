@@ -22,11 +22,11 @@ export const SERVICES: Record<string, RecruitService> = {
   },
   "tech-career-agent": {
     slug: "tech-career-agent",
-    name: "Tech Career Agent",
-    description: "IT・Web業界に強い転職エージェント",
-    strengths: ["IT/Web求人に特化", "エンジニア・マーケ職に対応", "年収交渉サポート"],
-    ctaLabel: "サービスを見る",
-    affiliateUrl: "https://example.com/affiliate/tech-career-agent",
+    name: "＠PRO人",
+    description: "IT・Web・ゲーム業界専門、未経験からのIT転職に強い転職エージェント",
+    strengths: ["IT/Web/ゲーム求人に特化", "未経験からのIT転職に対応", "年収アップ率82%の実績"],
+    ctaLabel: "無料でキャリア相談する",
+    affiliateUrl: "https://px.a8.net/svt/ejp?a8mat=3N8DIR+4ASQ2A+4GWI+BZVU9",
   },
   "work-shift-plus": {
     slug: "work-shift-plus",
