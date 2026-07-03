@@ -11,7 +11,8 @@ Next.js 16 (App Router / Turbopack) / TypeScript / Tailwind CSS v4 / canvas-conf
 - lint: `npm run lint`
 
 ## デプロイ
-- 未デプロイ(Vercel想定。実行前にユーザー確認)
+- 本番: https://nenshu-up-simulator.vercel.app (Vercel、GitHub連携済み。master へ push で自動デプロイ)
+- リポジトリ: https://github.com/uuki252510/nenshu-up-simulator (Public)
 
 ## 設計ルール
 - 診断ロジックは `src/lib/simulator.ts` の純関数に集約。UIにロジックを書かない
@@ -25,5 +26,6 @@ Next.js 16 (App Router / Turbopack) / TypeScript / Tailwind CSS v4 / canvas-conf
 なし(.env 不使用)
 
 ## 現在のフェーズ / 未実装
-- MVP完成: 入力→ローディング→結果→おすすめ→Xシェア→再診断まで動作
-- 未実装: 実アフィリエイトURL差し替え、OGP画像、デプロイ
+- MVP完成・本番デプロイ済み: 入力→ローディング→結果→おすすめ→Xシェア→再診断まで動作
+- Tech Career Agent枠は実アフィリエイト(＠PRO人)に差し替え済み。Career Rise / Work Shift Plus / High Class Agent / Remote Career は仮URLのまま
+- 未実装: 残り枠の実アフィリエイトURL差し替え、OGP画像
