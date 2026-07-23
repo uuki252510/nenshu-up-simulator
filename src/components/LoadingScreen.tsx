@@ -1,5 +1,6 @@
 "use client";
 
+import { CircleNotch } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 
 const MESSAGES = [
@@ -13,43 +14,28 @@ export default function LoadingScreen() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setIndex((i) => Math.min(i + 1, MESSAGES.length - 1));
+      setIndex((current) => Math.min(current + 1, MESSAGES.length - 1));
     }, 650);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className="animate-rise-in mx-auto flex max-w-2xl flex-col items-center px-4 py-24">
-      <div className="relative size-16">
-        <svg className="animate-spin-slow size-16" viewBox="0 0 48 48" aria-hidden="true">
-          <circle
-            cx="24"
-            cy="24"
-            r="20"
-            fill="none"
-            stroke="#dde6f0"
-            strokeWidth="5"
-          />
-          <path
-            d="M24 4a20 20 0 0 1 20 20"
-            fill="none"
-            stroke="#d9ad4b"
-            strokeWidth="5"
-            strokeLinecap="round"
-          />
-        </svg>
-      </div>
+    <div className="animate-rise-in mx-auto flex min-h-[calc(100svh-4rem)] max-w-2xl flex-col items-center justify-center px-5 py-24 lg:min-h-[calc(100svh-5rem)]">
+      <span className="flex size-18 items-center justify-center rounded-full border border-gold-300 bg-gold-50 text-gold-600">
+        <CircleNotch className="animate-spin-slow size-9" weight="bold" aria-hidden="true" />
+      </span>
       <p
         key={index}
-        className="animate-rise-in mt-8 text-[15px] font-semibold text-navy-800"
+        className="animate-rise-in mt-7 text-[15px] font-bold text-navy-800"
         role="status"
+        aria-live="polite"
       >
         {MESSAGES[index]}
       </p>
-      <p className="mt-2 text-[12px] text-navy-600">少々お待ちください</p>
-      <div className="mt-10 h-1 w-48 overflow-hidden rounded-full bg-navy-100">
+      <p className="mt-2 text-xs text-slate-500">少々お待ちください</p>
+      <div className="mt-9 h-1.5 w-52 overflow-hidden rounded-full bg-slate-200">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-navy-800 to-gold-400"
+          className="h-full rounded-full bg-blue-800"
           style={{ animation: "bar-fill 1.9s ease-out forwards" }}
         />
       </div>

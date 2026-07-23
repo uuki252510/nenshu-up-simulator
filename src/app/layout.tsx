@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_JP, Marcellus, Manrope } from "next/font/google";
+import { Manrope, Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
 import "./globals.css";
 
 const notoSansJp = Noto_Sans_JP({
@@ -7,9 +7,9 @@ const notoSansJp = Noto_Sans_JP({
   subsets: ["latin"],
 });
 
-const marcellus = Marcellus({
-  variable: "--font-marcellus",
-  weight: "400",
+const notoSerifJp = Noto_Serif_JP({
+  variable: "--font-noto-serif-jp",
+  weight: ["500", "600", "700"],
   subsets: ["latin"],
 });
 
@@ -40,7 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
-      className={`${notoSansJp.variable} ${marcellus.variable} ${manrope.variable} h-full antialiased`}
+      className={`${notoSansJp.variable} ${notoSerifJp.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

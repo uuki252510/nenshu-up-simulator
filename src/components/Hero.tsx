@@ -1,19 +1,13 @@
 export default function Hero() {
   return (
-    <section className="mx-auto max-w-2xl px-4 pt-10 pb-6 text-center">
-      <p className="font-display text-[12px] tracking-[0.3em] text-gold-600">
-        SALARY SIMULATION
-      </p>
-      <h1 className="mt-3 text-[26px] font-bold leading-snug text-navy-900 sm:text-3xl">
-        あなたの年収アップ可能性を
-        <br className="sm:hidden" />
-        診断
+    <section className="animate-rise-in">
+      <h1 className="max-w-[680px] font-display text-[32px] font-semibold leading-[1.45] tracking-[-0.035em] text-navy-900 sm:text-[36px] lg:whitespace-nowrap lg:text-[38px]">
+        あなたの次の年収レンジを、
+        <span className="whitespace-nowrap text-gold-600">30秒で。</span>
       </h1>
-      <p className="mx-auto mt-3 max-w-md text-[13.5px] leading-relaxed text-navy-600">
-        年齢・年収・学歴・業種を選ぶだけで、転職時の想定年収レンジと
-        おすすめサービスをチェックできます。
+      <p className="mt-4 max-w-[620px] text-[14px] leading-7 text-slate-600 sm:text-[15px]">
+        年齢・年収・学歴・業種から、転職市場での可能性を診断します。
       </p>
-      <div className="mx-auto mt-5 h-px w-16 bg-gradient-to-r from-transparent via-gold-400 to-transparent" />
     </section>
   );
 }

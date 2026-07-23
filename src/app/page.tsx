@@ -1,18 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import Header from "@/components/Header";
-import Hero from "@/components/Hero";
-import SimulatorForm from "@/components/SimulatorForm";
-import LoadingScreen from "@/components/LoadingScreen";
-import ResultCard from "@/components/ResultCard";
-import RecommendationCard from "@/components/RecommendationCard";
-import ShareButton from "@/components/ShareButton";
+import { ArrowCounterClockwise } from "@phosphor-icons/react";
+import CompanyMatch from "@/components/CompanyMatch";
 import Confetti from "@/components/Confetti";
 import Disclaimer from "@/components/Disclaimer";
 import Footer from "@/components/Footer";
-import { simulate, type SimulatorInput, type SimulatorResult } from "@/lib/simulator";
+import ForecastPreview from "@/components/ForecastPreview";
+import Header from "@/components/Header";
+import Hero from "@/components/Hero";
+import LoadingScreen from "@/components/LoadingScreen";
+import RecommendationCard from "@/components/RecommendationCard";
+import ResultCard from "@/components/ResultCard";
+import ShareButton from "@/components/ShareButton";
+import SimulatorForm from "@/components/SimulatorForm";
 import { recommendServices, type RecruitService } from "@/lib/services";
+import { simulate, type SimulatorInput, type SimulatorResult } from "@/lib/simulator";
 
 type Step = "form" | "loading" | "result";
 
@@ -49,83 +52,71 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main className="flex-1 pb-6">
+      <main className="flex-1">
         {step === "form" && (
-          <>
-            <Hero />
-            <SimulatorForm value={input} onChange={setInput} onSubmit={startDiagnosis} />
-            <section className="mx-auto max-w-2xl px-4 pb-4">
-              <a
-                href="/blog"
-                className="flex items-center justify-between rounded-2xl border border-navy-100 bg-white/80 px-5 py-4 transition-colors hover:border-gold-400"
-              >
-                <div>
-                  <p className="font-display text-[10px] tracking-[0.24em] text-gold-600">
-                    COLUMN
-                  </p>
-                  <p className="mt-1 text-[13.5px] font-bold text-navy-900">
-                    転職と年収の基礎知識を読む
-                  </p>
-                </div>
-                <svg
-                  className="size-4 shrink-0 text-navy-600"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="m6 3.5 4.5 4.5L6 12.5"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </a>
-            </section>
-          </>
+          <div className="mx-auto grid min-h-[calc(100svh-4rem)] max-w-[1440px] grid-cols-1 lg:min-h-[calc(100svh-5rem)] lg:grid-cols-[minmax(0,1.08fr)_minmax(430px,0.92fr)]">
+            <div className="px-5 py-10 sm:px-9 sm:py-12 lg:px-14 lg:py-14">
+              <Hero />
+              <SimulatorForm
+                value={input}
+                onChange={setInput}
+                onSubmit={startDiagnosis}
+              />
+            </div>
+            <ForecastPreview />
+          </div>
         )}
 
         {step === "loading" && <LoadingScreen />}
 
         {step === "result" && result && (
-          <div className="pt-8">
+          <div className="pb-16">
             <Confetti />
-            <ResultCard result={result} />
+            <div className="mx-auto grid max-w-[1440px] grid-cols-1 lg:grid-cols-[minmax(0,1.08fr)_minmax(430px,0.92fr)]">
+              <div className="px-5 py-10 sm:px-9 lg:px-14 lg:py-14">
+                <ResultCard result={result} />
+              </div>
+              <ForecastPreview result={result} />
+            </div>
 
-            <section className="mx-auto mt-10 max-w-2xl px-4">
-              <h2 className="text-center text-[19px] font-bold text-navy-900">
-                あなたにおすすめの転職サービス
-              </h2>
-              <div className="mx-auto mt-2 h-px w-12 bg-gold-400" />
-              {services.some((s) => s.isAffiliate) && (
-                <p className="mt-3 text-center text-[11px] text-navy-600/80">
-                  ※本セクションには広告(PRリンク)を含みます
+            <CompanyMatch result={result} industry={input.industry} />
+
+            <section className="mx-auto mt-16 max-w-6xl px-5 sm:px-9">
+              <div className="max-w-2xl">
+                <p className="text-xs font-bold tracking-[0.18em] text-gold-600">
+                  NEXT ACTION
+                </p>
+                <h2 className="mt-3 font-display text-2xl font-semibold text-navy-900 sm:text-3xl">
+                  可能性を、具体的な一歩へ。
+                </h2>
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  診断条件に合うサービスを、強みと使い方で比較できます。
+                </p>
+              </div>
+              {services.some((service) => service.isAffiliate) && (
+                <p className="mt-4 text-xs text-slate-500">
+                  ※このセクションには広告（PRリンク）を含みます。
                 </p>
               )}
-              <div className="mt-6 space-y-4">
-                {services.map((service, i) => (
-                  <RecommendationCard key={service.slug} service={service} rank={i + 1} />
+              <div className="mt-8 grid gap-5 lg:grid-cols-3">
+                {services.map((service, index) => (
+                  <RecommendationCard
+                    key={service.slug}
+                    service={service}
+                    rank={index + 1}
+                  />
                 ))}
               </div>
             </section>
 
-            <section className="mx-auto mt-10 max-w-2xl px-4">
+            <section className="mx-auto mt-14 max-w-2xl px-5 sm:px-9">
               <ShareButton result={result} />
               <button
                 type="button"
                 onClick={retry}
-                className="mt-2.5 flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-navy-800 bg-white text-[13px] font-bold text-navy-900 transition-colors hover:bg-navy-50"
+                className="mt-3 flex h-13 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white text-[13px] font-bold text-navy-900 transition-colors hover:bg-slate-50"
               >
-                <svg className="size-4" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path
-                    d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v2.6h-2.6"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <ArrowCounterClockwise className="size-4" weight="bold" aria-hidden="true" />
                 条件を変えてもう一度診断する
               </button>
             </section>

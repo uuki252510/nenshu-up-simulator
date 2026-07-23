@@ -1,5 +1,6 @@
 "use client";
 
+import { Check, Copy, XLogo } from "@phosphor-icons/react";
 import { useState } from "react";
 import type { SimulatorResult } from "@/lib/simulator";
 
@@ -20,53 +21,27 @@ export default function ShareButton({ result }: { result: SimulatorResult }) {
   };
 
   return (
-    <div className="space-y-2.5">
+    <div className="grid gap-3 sm:grid-cols-2">
       <a
         href={xUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-navy-950 text-[14px] font-bold text-white transition-all hover:brightness-125 active:scale-[0.99]"
+        className="flex h-13 items-center justify-center gap-2 rounded-xl bg-navy-950 text-sm font-bold text-white transition-colors hover:bg-navy-700"
       >
-        <svg className="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.213 5.567 5.95-5.567Zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-        </svg>
-        結果をXでシェアする
+        <XLogo className="size-4" weight="bold" aria-hidden="true" />
+        結果をXでシェア
       </a>
       <button
         type="button"
         onClick={copyResult}
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-navy-100 bg-white text-[13px] font-semibold text-navy-800 transition-colors hover:bg-navy-50"
+        className="flex h-13 cursor-pointer items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white text-sm font-bold text-navy-800 transition-colors hover:bg-slate-50"
       >
         {copied ? (
-          <svg className="size-4 text-gold-600" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path
-              d="m3.5 8.5 3 3 6-6"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <Check className="size-4 text-gold-600" weight="bold" aria-hidden="true" />
         ) : (
-          <svg className="size-4" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <rect
-              x="5.5"
-              y="5.5"
-              width="8"
-              height="8"
-              rx="1.5"
-              stroke="currentColor"
-              strokeWidth="1.4"
-            />
-            <path
-              d="M10.5 3.5v-1a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h1"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-            />
-          </svg>
+          <Copy className="size-4" weight="bold" aria-hidden="true" />
         )}
-        {copied ? "コピーしました" : "結果をコピーする"}
+        {copied ? "コピーしました" : "結果をコピー"}
       </button>
     </div>
   );

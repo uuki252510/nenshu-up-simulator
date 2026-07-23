@@ -1,34 +1,26 @@
+import { ChartLineUp } from "@phosphor-icons/react/dist/ssr";
+import Link from "next/link";
+
 export default function Header() {
   return (
-    <header className="bg-navy-900 text-white">
-      <div className="mx-auto flex h-14 max-w-2xl items-center justify-between px-4">
-        <div className="flex items-center gap-2.5">
-          <svg
-            className="size-6 text-gold-400"
-            viewBox="0 0 24 24"
-            fill="none"
+    <header className="border-b border-slate-200 bg-white">
+      <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-5 sm:h-20 sm:px-9">
+        <Link
+          href="/"
+          className="flex items-center gap-3 rounded-md text-navy-900 transition-opacity hover:opacity-70"
+          aria-label="年収UPシミュレーター ホーム"
+        >
+          <ChartLineUp
+            className="size-6 text-gold-600 sm:size-7"
+            weight="duotone"
             aria-hidden="true"
-          >
-            <path
-              d="M4 19V11M9.5 19V5M15 19v-8M20 19V8"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-            />
-            <path
-              d="M16.5 4.5 20 8l-3.5 1"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span className="text-[15px] font-bold tracking-wide">
+          />
+          <span className="text-[15px] font-bold tracking-[0.02em] sm:text-lg">
             年収UPシミュレーター
           </span>
-        </div>
-        <span className="rounded-full bg-gold-400 px-2.5 py-0.5 font-display text-[11px] font-semibold tracking-[0.14em] text-navy-900">
-          FREE
+        </Link>
+        <span className="rounded-lg border border-gold-500 bg-white px-3 py-1.5 text-[11px] font-bold tracking-[0.08em] text-gold-600 sm:px-4 sm:text-xs">
+          登録不要・無料
         </span>
       </div>
     </header>
