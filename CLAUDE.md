@@ -26,6 +26,7 @@ Next.js 16 (App Router / Turbopack) / TypeScript / Tailwind CSS v4 / canvas-conf
 なし(.env 不使用)
 
 ## 現在のフェーズ / 未実装
-- MVP完成・本番デプロイ済み: 入力→ローディング→結果→おすすめ→Xシェア→再診断まで動作
-- Tech Career Agent枠は実アフィリエイト(＠PRO人)に差し替え済み。Career Rise / Work Shift Plus / High Class Agent / Remote Career は仮URLのまま
-- 未実装: 残り枠の実アフィリエイトURL差し替え、OGP画像
+- MVP完成・本番デプロイ済み・ASP審査対応済み: 全サービスが実在サービス(＠PRO人のみA8アフィリエイト、他は公式直リンク)
+- services.ts の isAffiliate フラグでPR表記とrel=sponsoredを自動制御。提携承認が下りたら url をASPリンクに差し替え+isAffiliate:true にするだけ
+- /privacy(プライバシーポリシー)・/about(運営者情報: 合同会社Nexia名義)あり
+- 未実装: OGP画像、お問い合わせ手段の記載(必要になったら/aboutに追記)
