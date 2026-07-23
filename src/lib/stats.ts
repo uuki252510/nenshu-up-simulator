@@ -6,7 +6,14 @@
  */
 
 export const STATS_SOURCE =
-  "国税庁「民間給与実態統計調査」(令和5年分)を基にした概数";
+  "国税庁「民間給与実態統計調査」(令和5年分)および厚生労働省「賃金構造基本統計調査」を基にした概数";
+
+/** 職種別の平均給与(万円)。賃金構造基本統計調査を基にした概数 */
+const OCCUPATION_AVG: Record<string, { label: string; value: number }> = {
+  nurse: { label: "看護師", value: 500 },
+  pharmacist: { label: "薬剤師", value: 580 },
+  "care-worker": { label: "介護職員", value: 360 },
+};
 
 /** 給与所得者全体の平均給与(万円) */
 export const OVERALL_AVG = 460;
@@ -39,15 +46,25 @@ export interface BenchmarkRow {
 }
 
 /** 診断結果と並べて表示する公的統計の比較行を返す */
-export function getBenchmarks(age: string, industry: string): BenchmarkRow[] {
+export function getBenchmarks(
+  age: string,
+  industry: string,
+  occupation?: string,
+): BenchmarkRow[] {
   const rows: BenchmarkRow[] = [];
   const ageAvg = AGE_AVG[age];
   const ageLabel = age === "51+" ? "51歳以上" : "同年代";
   if (ageAvg) rows.push({ label: `${ageLabel}の平均給与`, value: ageAvg });
 
-  const ind = INDUSTRY_AVG[industry];
-  if (ind && ind.label !== "給与所得者全体") {
-    rows.push({ label: `${ind.label}の平均給与`, value: ind.value });
+  // 職種別統計がある場合は業種平均より優先して表示する
+  const occ = occupation ? OCCUPATION_AVG[occupation] : undefined;
+  if (occ) {
+    rows.push({ label: `${occ.label}の平均給与`, value: occ.value });
+  } else {
+    const ind = INDUSTRY_AVG[industry];
+    if (ind && ind.label !== "給与所得者全体") {
+      rows.push({ label: `${ind.label}の平均給与`, value: ind.value });
+    }
   }
 
   rows.push({ label: "給与所得者全体の平均", value: OVERALL_AVG });

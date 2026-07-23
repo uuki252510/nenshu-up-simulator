@@ -79,6 +79,58 @@ export const SERVICES: Record<string, RecruitService> = {
     isAffiliate: false,
     url: "https://next.rikunabi.com/",
   },
+  "leverwell-kango": {
+    slug: "leverwell-kango",
+    name: "レバウェル看護",
+    description: "看護師向けの転職支援サービス",
+    strengths: [
+      "看護師求人に特化",
+      "職場の内部情報にくわしい",
+      "夜勤・働き方の相談ができる",
+    ],
+    ctaLabel: "公式サイトを見る",
+    isAffiliate: false,
+    url: "https://kango-oshigoto.jp/",
+  },
+  "job-medley": {
+    slug: "job-medley",
+    name: "ジョブメドレー",
+    description: "医療・介護・福祉に特化した求人サイト",
+    strengths: [
+      "医療・介護職の求人数が多い",
+      "スカウトが届く",
+      "自分のペースで応募できる",
+    ],
+    ctaLabel: "求人を見る",
+    isAffiliate: false,
+    url: "https://job-medley.com/",
+  },
+  "pharma-staff": {
+    slug: "pharma-staff",
+    name: "ファルマスタッフ",
+    description: "薬剤師向けの転職支援サービス",
+    strengths: [
+      "薬剤師求人に特化",
+      "調剤薬局・病院・企業に対応",
+      "派遣・パートの相談もできる",
+    ],
+    ctaLabel: "公式サイトを見る",
+    isAffiliate: false,
+    url: "https://www.38-8931.com/",
+  },
+  "leverwell-kaigo": {
+    slug: "leverwell-kaigo",
+    name: "レバウェル介護",
+    description: "介護職向けの転職支援サービス",
+    strengths: [
+      "介護職の求人に特化",
+      "資格取得の相談ができる",
+      "未経験・無資格の求人もある",
+    ],
+    ctaLabel: "公式サイトを見る",
+    isAffiliate: false,
+    url: "https://job.kiracare.jp/",
+  },
 };
 
 export function getServiceBySlug(slug: string): RecruitService | undefined {
@@ -86,14 +138,21 @@ export function getServiceBySlug(slug: string): RecruitService | undefined {
 }
 
 /**
- * 出し分けルール(優先順): 現在年収800万円以上 > 働き方を変えたい > IT・Web > デフォルト
+ * 出し分けルール(優先順):
+ * 医療系職種(看護師/薬剤師/介護職) > 現在年収800万円以上 > 働き方を変えたい > IT・Web > デフォルト
  */
 export function recommendServices(input: SimulatorInput): RecruitService[] {
   const median =
     INCOME_OPTIONS.find((o) => o.value === input.income)?.median ?? 0;
 
   let slugs: string[];
-  if (median >= 900) {
+  if (input.occupation === "nurse") {
+    slugs = ["leverwell-kango", "job-medley", "rikunabi-next"];
+  } else if (input.occupation === "pharmacist") {
+    slugs = ["pharma-staff", "job-medley", "rikunabi-next"];
+  } else if (input.occupation === "care-worker") {
+    slugs = ["leverwell-kaigo", "job-medley", "rikunabi-next"];
+  } else if (median >= 900) {
     // 800〜1000万円帯以上
     slugs = ["bizreach", "recruit-direct-scout", "at-projin"];
   } else if (input.reasons.includes("work-style")) {

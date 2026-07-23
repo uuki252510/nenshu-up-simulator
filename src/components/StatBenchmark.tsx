@@ -11,7 +11,7 @@ export default function StatBenchmark({
   input: SimulatorInput;
   result: SimulatorResult;
 }) {
-  const benchmarks = getBenchmarks(input.age, input.industry);
+  const benchmarks = getBenchmarks(input.age, input.industry, input.occupation);
   if (benchmarks.length === 0) return null;
 
   const rows = [
