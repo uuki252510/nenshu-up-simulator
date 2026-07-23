@@ -9,6 +9,9 @@ export default function Footer() {
         </p>
         <p className="mt-2 text-[13px] font-semibold">年収UPシミュレーター</p>
         <nav className="mt-4 flex justify-center gap-5 text-[12px] text-white/70">
+          <Link href="/blog" className="transition-colors hover:text-gold-300">
+            転職コラム
+          </Link>
           <Link href="/privacy" className="transition-colors hover:text-gold-300">
             プライバシーポリシー
           </Link>

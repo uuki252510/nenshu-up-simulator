@@ -54,6 +54,35 @@ export default function Home() {
           <>
             <Hero />
             <SimulatorForm value={input} onChange={setInput} onSubmit={startDiagnosis} />
+            <section className="mx-auto max-w-2xl px-4 pb-4">
+              <a
+                href="/blog"
+                className="flex items-center justify-between rounded-2xl border border-navy-100 bg-white/80 px-5 py-4 transition-colors hover:border-gold-400"
+              >
+                <div>
+                  <p className="font-display text-[10px] tracking-[0.24em] text-gold-600">
+                    COLUMN
+                  </p>
+                  <p className="mt-1 text-[13.5px] font-bold text-navy-900">
+                    転職と年収の基礎知識を読む
+                  </p>
+                </div>
+                <svg
+                  className="size-4 shrink-0 text-navy-600"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="m6 3.5 4.5 4.5L6 12.5"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </a>
+            </section>
           </>
         )}
 
