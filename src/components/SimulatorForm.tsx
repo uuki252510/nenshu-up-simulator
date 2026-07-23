@@ -3,9 +3,12 @@
 import { ArrowRight, CaretDown, LockKey } from "@phosphor-icons/react";
 import {
   AGE_OPTIONS,
+  COMPANY_SIZE_OPTIONS,
   EDUCATION_OPTIONS,
   INCOME_OPTIONS,
   INDUSTRY_OPTIONS,
+  MANAGEMENT_OPTIONS,
+  OCCUPATION_OPTIONS,
   REASON_OPTIONS,
   type SelectOption,
 } from "@/lib/options";
@@ -68,10 +71,23 @@ function SelectField({
 
 export default function SimulatorForm({ value, onChange, onSubmit }: Props) {
   const answered =
-    [value.age, value.income, value.education, value.industry].filter(Boolean)
-      .length + (value.reasons.length > 0 ? 1 : 0);
+    [
+      value.age,
+      value.income,
+      value.education,
+      value.industry,
+      value.occupation,
+      value.companySize,
+      value.management,
+    ].filter(Boolean).length + (value.reasons.length > 0 ? 1 : 0);
   const ready = Boolean(
-    value.age && value.income && value.education && value.industry,
+    value.age &&
+      value.income &&
+      value.education &&
+      value.industry &&
+      value.occupation &&
+      value.companySize &&
+      value.management,
   );
 
   const toggleReason = (reason: string) => {
@@ -85,18 +101,18 @@ export default function SimulatorForm({ value, onChange, onSubmit }: Props) {
 
   return (
     <section className="animate-rise-in stagger-1 mt-9" aria-labelledby="form-title">
-      <div className="flex items-center gap-4" aria-label={`入力状況 ${answered}/5`}>
+      <div className="flex items-center gap-4" aria-label={`入力状況 ${answered}/8`}>
         <span className="shrink-0 font-numeric text-[12px] font-extrabold tracking-[0.1em] text-navy-900">
-          STEP 0 / 5
+          STEP
         </span>
         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200">
           <div
             className="h-full rounded-full bg-blue-700 transition-[width] duration-500 ease-out"
-            style={{ width: `${(answered / 5) * 100}%` }}
+            style={{ width: `${(answered / 8) * 100}%` }}
           />
         </div>
         <span className="font-numeric text-sm font-extrabold text-navy-900">
-          {answered}/5
+          {answered}/8
         </span>
       </div>
 
@@ -132,6 +148,27 @@ export default function SimulatorForm({ value, onChange, onSubmit }: Props) {
           options={INDUSTRY_OPTIONS}
           placeholder="現在の業種を選択"
           onChange={(industry) => onChange({ ...value, industry })}
+        />
+        <SelectField
+          label="職種"
+          value={value.occupation}
+          options={OCCUPATION_OPTIONS}
+          placeholder="職種を選択"
+          onChange={(occupation) => onChange({ ...value, occupation })}
+        />
+        <SelectField
+          label="勤務先の企業規模"
+          value={value.companySize}
+          options={COMPANY_SIZE_OPTIONS}
+          placeholder="従業員数を選択"
+          onChange={(companySize) => onChange({ ...value, companySize })}
+        />
+        <SelectField
+          label="役職・マネジメント経験"
+          value={value.management}
+          options={MANAGEMENT_OPTIONS}
+          placeholder="現在の役職を選択"
+          onChange={(management) => onChange({ ...value, management })}
         />
 
         <fieldset className="sm:col-span-2">

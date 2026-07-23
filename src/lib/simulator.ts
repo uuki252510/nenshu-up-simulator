@@ -1,10 +1,15 @@
 import {
   AGE_OPTIONS,
+  COMPANY_SIZE_OPTIONS,
   EDUCATION_OPTIONS,
   INCOME_OPTIONS,
   INDUSTRY_OPTIONS,
+  MANAGEMENT_OPTIONS,
+  OCCUPATION_OPTIONS,
   REASON_ADJ_CAP,
   REASON_OPTIONS,
+  TOTAL_ADJ_MAX,
+  TOTAL_ADJ_MIN,
 } from "./options";
 
 export interface SimulatorInput {
@@ -12,6 +17,9 @@ export interface SimulatorInput {
   income: string;
   education: string;
   industry: string;
+  occupation: string;
+  companySize: string;
+  management: string;
   reasons: string[];
 }
 
@@ -27,7 +35,7 @@ export interface SimulatorResult {
   grade: Grade;
   gradeMessage: string;
   comment: string;
-  /** 入力条件の表示用タグ(例: 41〜50歳 / 大学 / IT・Web) */
+  /** 入力条件の表示用タグ(例: 41〜50歳 / 大学 / IT・Web / エンジニア・技術職) */
   tags: string[];
   /** 現在の年収レンジ表示用(例: 800〜1000万円) */
   currentIncomeLabel: string;
@@ -54,7 +62,24 @@ export function simulate(input: SimulatorInput): SimulatorResult {
   const income = INCOME_OPTIONS.find((o) => o.value === input.income);
   const education = EDUCATION_OPTIONS.find((o) => o.value === input.education);
   const industry = INDUSTRY_OPTIONS.find((o) => o.value === input.industry);
-  if (!age || !income || !education || !industry) {
+  const occupation = OCCUPATION_OPTIONS.find(
+    (o) => o.value === input.occupation,
+  );
+  const companySize = COMPANY_SIZE_OPTIONS.find(
+    (o) => o.value === input.companySize,
+  );
+  const management = MANAGEMENT_OPTIONS.find(
+    (o) => o.value === input.management,
+  );
+  if (
+    !age ||
+    !income ||
+    !education ||
+    !industry ||
+    !occupation ||
+    !companySize ||
+    !management
+  ) {
     throw new Error("Invalid simulator input");
   }
 
@@ -66,7 +91,16 @@ export function simulate(input: SimulatorInput): SimulatorResult {
     ),
   );
 
-  const totalAdj = age.adj + education.adj + industry.adj + reasonAdj;
+  // 職種・企業規模・マネジメント経験を主役に、業種・年齢・学歴で補正する
+  const rawAdj =
+    occupation.adj +
+    companySize.adj +
+    management.adj +
+    industry.adj +
+    age.adj +
+    education.adj +
+    reasonAdj;
+  const totalAdj = Math.min(TOTAL_ADJ_MAX, Math.max(TOTAL_ADJ_MIN, rawAdj));
   const estimate = Math.round(income.median * (1 + totalAdj));
 
   // 下限 ×0.96 / 上限 ×1.04 を基準に、上振れ・下振れ幅を軽くランダムに持たせる
@@ -76,8 +110,8 @@ export function simulate(input: SimulatorInput): SimulatorResult {
   const grade = gradeOf(estimate);
 
   const comment =
-    `${age.label}・${industry.label}の場合、条件次第で年収${lower}万円〜${upper}万円が目安です。` +
-    `スキルや企業規模によってはさらに上振れも期待できます。` +
+    `${age.label}・${industry.label}(${occupation.label})の場合、条件次第で年収${lower}万円〜${upper}万円が目安です。` +
+    `マネジメント経験や企業規模の伝え方次第で、さらに上振れも期待できます。` +
     `転職理由を言語化できると、条件交渉で有利になりやすいです。`;
 
   return {
@@ -87,7 +121,7 @@ export function simulate(input: SimulatorInput): SimulatorResult {
     grade,
     gradeMessage: GRADE_MESSAGES[grade],
     comment,
-    tags: [age.label, education.label, industry.label],
+    tags: [age.label, education.label, industry.label, occupation.label],
     currentIncomeLabel: income.label,
   };
 }

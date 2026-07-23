@@ -49,6 +49,31 @@ export const INDUSTRY_OPTIONS: SelectOption[] = [
   { value: "other", label: "その他", adj: 0.01 },
 ];
 
+export const OCCUPATION_OPTIONS: SelectOption[] = [
+  { value: "engineer", label: "エンジニア・技術職", adj: 0.08 },
+  { value: "consultant-pro", label: "コンサルタント・専門職", adj: 0.08 },
+  { value: "planning-marketing", label: "企画・マーケティング", adj: 0.05 },
+  { value: "sales-job", label: "営業職", adj: 0.04 },
+  { value: "creative", label: "クリエイティブ職", adj: 0.02 },
+  { value: "back-office", label: "事務・バックオフィス", adj: -0.04 },
+  { value: "service", label: "販売・サービス", adj: -0.06 },
+  { value: "other-job", label: "その他", adj: 0 },
+];
+
+export const COMPANY_SIZE_OPTIONS: SelectOption[] = [
+  { value: "1000+", label: "1,000名以上", adj: 0.06 },
+  { value: "300-999", label: "300〜999名", adj: 0.03 },
+  { value: "50-299", label: "50〜299名", adj: 0 },
+  { value: "u50", label: "50名未満", adj: -0.03 },
+];
+
+export const MANAGEMENT_OPTIONS: SelectOption[] = [
+  { value: "none", label: "役職なし", adj: 0 },
+  { value: "leader", label: "リーダー・主任クラス", adj: 0.03 },
+  { value: "manager", label: "課長クラス", adj: 0.07 },
+  { value: "director", label: "部長クラス以上", adj: 0.12 },
+];
+
 export const REASON_OPTIONS: SelectOption[] = [
   { value: "raise-income", label: "年収を上げたい", adj: 0.03 },
   { value: "skill-up", label: "スキルアップしたい", adj: 0.01 },
@@ -59,3 +84,7 @@ export const REASON_OPTIONS: SelectOption[] = [
 
 /** 転職理由による補正の上限 */
 export const REASON_ADJ_CAP = 0.03;
+
+/** 合計補正のクランプ(過度な上振れ・下振れを防ぐ) */
+export const TOTAL_ADJ_MAX = 0.25;
+export const TOTAL_ADJ_MIN = -0.1;

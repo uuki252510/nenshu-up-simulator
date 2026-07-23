@@ -14,6 +14,7 @@ import RecommendationCard from "@/components/RecommendationCard";
 import ResultCard from "@/components/ResultCard";
 import ShareButton from "@/components/ShareButton";
 import SimulatorForm from "@/components/SimulatorForm";
+import StatBenchmark from "@/components/StatBenchmark";
 import { recommendServices, type RecruitService } from "@/lib/services";
 import { simulate, type SimulatorInput, type SimulatorResult } from "@/lib/simulator";
 
@@ -24,6 +25,9 @@ const EMPTY_INPUT: SimulatorInput = {
   income: "",
   education: "",
   industry: "",
+  occupation: "",
+  companySize: "",
+  management: "",
   reasons: [],
 };
 
@@ -75,6 +79,7 @@ export default function Home() {
             <div className="mx-auto grid max-w-[1440px] grid-cols-1 lg:grid-cols-[minmax(0,1.08fr)_minmax(430px,0.92fr)]">
               <div className="px-5 py-10 sm:px-9 lg:px-14 lg:py-14">
                 <ResultCard result={result} />
+                <StatBenchmark input={input} result={result} />
               </div>
               <ForecastPreview result={result} />
             </div>
