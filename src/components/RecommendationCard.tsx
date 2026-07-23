@@ -24,9 +24,12 @@ export default function RecommendationCard({
         >
           {rank}
         </span>
-        <div>
-          <p className="text-[16px] font-bold text-navy-900">{service.name}</p>
-        </div>
+        <p className="text-[16px] font-bold text-navy-900">{service.name}</p>
+        {service.isAffiliate && (
+          <span className="ml-auto shrink-0 rounded border border-navy-100 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-navy-600">
+            PR
+          </span>
+        )}
       </div>
       <p className="mt-2.5 text-[12.5px] leading-relaxed text-navy-600">
         {service.description}
@@ -59,7 +62,11 @@ export default function RecommendationCard({
       <a
         href={`/go/${service.slug}`}
         target="_blank"
-        rel="noopener noreferrer sponsored"
+        rel={
+          service.isAffiliate
+            ? "noopener noreferrer nofollow sponsored"
+            : "noopener noreferrer nofollow"
+        }
         className={`mt-4 flex h-12 w-full items-center justify-center gap-1.5 rounded-xl text-[14px] font-bold transition-all hover:brightness-110 active:scale-[0.99] ${
           isTop
             ? "bg-gradient-to-r from-gold-500 to-gold-400 text-navy-950"

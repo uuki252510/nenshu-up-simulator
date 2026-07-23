@@ -69,6 +69,11 @@ export default function Home() {
                 あなたにおすすめの転職サービス
               </h2>
               <div className="mx-auto mt-2 h-px w-12 bg-gold-400" />
+              {services.some((s) => s.isAffiliate) && (
+                <p className="mt-3 text-center text-[11px] text-navy-600/80">
+                  ※本セクションには広告(PRリンク)を含みます
+                </p>
+              )}
               <div className="mt-6 space-y-4">
                 {services.map((service, i) => (
                   <RecommendationCard key={service.slug} service={service} rank={i + 1} />

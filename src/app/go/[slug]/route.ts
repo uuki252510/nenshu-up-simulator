@@ -10,5 +10,5 @@ export async function GET(
   if (!service) {
     return NextResponse.redirect(new URL("/", request.url));
   }
-  return NextResponse.redirect(service.affiliateUrl, 302);
+  return NextResponse.redirect(service.url, 302);
 }

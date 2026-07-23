@@ -19,6 +19,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://nenshu-up-simulator.vercel.app"),
   title: "年収UPシミュレーター｜あなたの年収アップ可能性を無料でチェック",
   description:
     "年齢・年収・学歴・業種を選ぶだけで、転職した場合の想定年収レンジとおすすめの転職サービスを無料で診断。登録不要・約30秒で自分の市場価値をチェックできます。",

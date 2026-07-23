@@ -7,50 +7,77 @@ export interface RecruitService {
   description: string;
   strengths: [string, string, string];
   ctaLabel: string;
-  /** 本番前に実アフィリエイトURLへ差し替える(仮URL) */
-  affiliateUrl: string;
+  /** true: ASP計測リンク(提携承認済み) / false: 公式サイトへの直リンク(未提携) */
+  isAffiliate: boolean;
+  /** 遷移先URL。提携承認が下りた枠から順にASPリンクへ差し替える */
+  url: string;
 }
 
 export const SERVICES: Record<string, RecruitService> = {
-  "career-rise": {
-    slug: "career-rise",
-    name: "Career Rise",
-    description: "年収アップを目指す方向けのハイクラス転職サービス",
-    strengths: ["高年収求人に強い", "非公開求人あり", "面接対策サポート"],
-    ctaLabel: "無料相談する",
-    affiliateUrl: "https://example.com/affiliate/career-rise",
+  bizreach: {
+    slug: "bizreach",
+    name: "ビズリーチ",
+    description: "スカウト型のハイクラス転職サイト",
+    strengths: [
+      "管理職・専門職などハイクラス求人が中心",
+      "企業やヘッドハンターからスカウトが届く",
+      "職務経歴書を登録して待つ使い方ができる",
+    ],
+    ctaLabel: "公式サイトを見る",
+    isAffiliate: false,
+    url: "https://www.bizreach.jp/",
   },
-  "tech-career-agent": {
-    slug: "tech-career-agent",
+  "recruit-direct-scout": {
+    slug: "recruit-direct-scout",
+    name: "リクルートダイレクトスカウト",
+    description: "リクルートが運営するハイクラス向けスカウトサービス",
+    strengths: [
+      "登録・利用が無料",
+      "ヘッドハンターに転職活動を任せられる",
+      "高年収帯の求人が豊富",
+    ],
+    ctaLabel: "公式サイトを見る",
+    isAffiliate: false,
+    url: "https://directscout.recruit.co.jp/",
+  },
+  "at-projin": {
+    slug: "at-projin",
     name: "＠PRO人",
     description: "IT・Web・ゲーム業界専門、未経験からのIT転職に強い転職エージェント",
-    strengths: ["IT/Web/ゲーム求人に特化", "未経験からのIT転職に対応", "年収アップ率82%の実績"],
+    strengths: [
+      "IT/Web/ゲーム求人に特化",
+      "未経験からのIT転職に対応",
+      "年収アップ率82%の実績(公式サイトより)",
+    ],
     ctaLabel: "無料でキャリア相談する",
-    affiliateUrl: "https://px.a8.net/svt/ejp?a8mat=3N8DIR+4ASQ2A+4GWI+BZVU9",
+    isAffiliate: true,
+    url: "https://px.a8.net/svt/ejp?a8mat=3N8DIR+4ASQ2A+4GWI+BZVU9",
   },
-  "work-shift-plus": {
-    slug: "work-shift-plus",
-    name: "Work Shift Plus",
-    description: "働き方を変えたい人向けの総合転職サービス",
-    strengths: ["リモート求人あり", "未経験相談も可能", "キャリア相談無料"],
-    ctaLabel: "無料登録する",
-    affiliateUrl: "https://example.com/affiliate/work-shift-plus",
+  miidas: {
+    slug: "miidas",
+    name: "ミイダス",
+    description: "市場価値診断からはじめられる転職アプリ",
+    strengths: [
+      "質問に答えるだけで想定年収がわかる",
+      "企業から面接確約オファーが届く",
+      "診断だけの利用もできる",
+    ],
+    ctaLabel: "無料で市場価値を診断",
+    isAffiliate: false,
+    url: "https://miidas.jp/",
   },
-  "high-class-agent": {
-    slug: "high-class-agent",
-    name: "High Class Agent",
-    description: "年収800万円以上向けのエグゼクティブ転職サービス",
-    strengths: ["ハイクラス求人専門", "ヘッドハンターからスカウト", "経営層への転職も支援"],
-    ctaLabel: "無料相談する",
-    affiliateUrl: "https://example.com/affiliate/high-class-agent",
-  },
-  "remote-career": {
-    slug: "remote-career",
-    name: "Remote Career",
-    description: "リモートワーク求人に特化した転職サービス",
-    strengths: ["フルリモート求人多数", "地方在住でも応募できる", "柔軟な働き方を提案"],
+  "rikunabi-next": {
+    slug: "rikunabi-next",
+    name: "リクナビNEXT",
+    description: "リクルートが運営する転職サイト",
+    strengths: [
+      "掲載求人数が多い",
+      "リモートワークなど働き方の条件で検索できる",
+      "自己分析ツールを無料で使える",
+    ],
     ctaLabel: "求人を見る",
-    affiliateUrl: "https://example.com/affiliate/remote-career",
+    isAffiliate: false,
+    url: "https://next.rikunabi.com/",
   },
 };
 
@@ -68,13 +95,13 @@ export function recommendServices(input: SimulatorInput): RecruitService[] {
   let slugs: string[];
   if (median >= 900) {
     // 800〜1000万円帯以上
-    slugs = ["career-rise", "high-class-agent", "tech-career-agent"];
+    slugs = ["bizreach", "recruit-direct-scout", "at-projin"];
   } else if (input.reasons.includes("work-style")) {
-    slugs = ["work-shift-plus", "remote-career", "career-rise"];
+    slugs = ["miidas", "rikunabi-next", "bizreach"];
   } else if (input.industry === "it-web") {
-    slugs = ["tech-career-agent", "career-rise", "work-shift-plus"];
+    slugs = ["at-projin", "bizreach", "miidas"];
   } else {
-    slugs = ["career-rise", "work-shift-plus", "tech-career-agent"];
+    slugs = ["rikunabi-next", "miidas", "bizreach"];
   }
   return slugs.map((s) => SERVICES[s]);
 }
