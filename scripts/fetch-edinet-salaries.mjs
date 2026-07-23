@@ -3,20 +3,18 @@
  * 「平均年間給与」を抽出して src/lib/companies-data.json を再生成するスクリプト。
  *
  * 使い方:
- *   1. https://api.edinet-fsa.go.jp/ でアカウント登録し、APIキー(無料)を取得
- *   2. 環境変数に設定して実行:
- *        EDINET_API_KEY=xxxx node scripts/fetch-edinet-salaries.mjs
- *   3. 完了後、src/lib/companies-data.json が全上場企業分に置き換わる
- *      (既存エントリの industry 分類は企業名一致で引き継がれる。新規企業は "other")
+ *   node --env-file=.env scripts/fetch-edinet-salaries.mjs
+ *   (.env に EDINET_API_KEY=xxxx を設定)
  *
- * 注意:
- *   - 直近365日分の提出書類を日次で走査するため、実行に30分〜1時間程度かかる
- *   - EDINETのレート制限に配慮して各リクエスト間に200msのウェイトを入れている
- *   - 取得値は円単位 → 万円に変換し、10万円単位に丸めて保存する
+ * 特徴:
+ *   - 進捗を scripts/.edinet-cache.json に日次で保存し、中断しても再実行で続きから走る
+ *   - 全日程走査済みになると companies-data.json を全上場企業分に置き換える
+ *     (既存エントリの industry 分類は企業名一致で引き継ぎ。新規企業は "other")
+ *   - 実行途中でも、その時点までの取得分で companies-data.json を更新する
  */
 
-import { readFileSync, writeFileSync } from "node:fs";
-import { unzipSync, strFromU8 } from "fflate";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { unzipSync } from "fflate";
 
 const API_KEY = process.env.EDINET_API_KEY;
 if (!API_KEY) {
@@ -26,6 +24,7 @@ if (!API_KEY) {
 
 const BASE = "https://api.edinet-fsa.go.jp/api/v2";
 const OUT_PATH = new URL("../src/lib/companies-data.json", import.meta.url);
+const CACHE_PATH = new URL("./.edinet-cache.json", import.meta.url);
 const DAYS = 365;
 const SALARY_ELEMENT =
   "jpcrp_cor:AverageAnnualSalaryInformationAboutReportingCompanyInformationAboutEmployees";
@@ -34,7 +33,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function fetchJson(url) {
   const res = await fetch(url);
-  if (!res.ok) throw new Error(`${res.status} ${url}`);
+  if (!res.ok) throw new Error(`${res.status}`);
   return res.json();
 }
 
@@ -42,8 +41,7 @@ async function fetchZip(url) {
   const res = await fetch(url);
   if (!res.ok) return null;
   const buf = new Uint8Array(await res.arrayBuffer());
-  // JSONが返ってきた場合はエラー応答
-  if (buf[0] === 0x7b) return null;
+  if (buf[0] === 0x7b) return null; // JSON応答=エラー
   return buf;
 }
 
@@ -61,8 +59,9 @@ function extractSalaryFromZip(zipBuf) {
     for (const line of text.split(/\r?\n/)) {
       if (!line.includes(SALARY_ELEMENT)) continue;
       const cols = line.split("\t").map((c) => c.replaceAll('"', "").trim());
-      // 列構成: 要素ID, 項目名, コンテキストID, 相対年度, 連結・個別, 期間・時点, ユニットID, 単位, 値
-      if (!cols[2]?.includes("FilingDateInstant")) continue;
+      // 要素IDが完全一致し、当期・提出会社(単体)の時点値のみ採用
+      if (cols[0] !== SALARY_ELEMENT) continue;
+      if (!cols[2]?.startsWith("CurrentYearInstant")) continue;
       const value = Number(cols.at(-1));
       if (Number.isFinite(value) && value > 0) return value;
     }
@@ -70,24 +69,48 @@ function extractSalaryFromZip(zipBuf) {
   return null;
 }
 
-async function main() {
-  // 既存データの industry 分類を企業名で引き継ぐ
-  let previous = [];
+function loadJson(path, fallback) {
   try {
-    previous = JSON.parse(readFileSync(OUT_PATH, "utf-8"));
+    return JSON.parse(readFileSync(path, "utf-8"));
   } catch {
-    /* 初回実行 */
+    return fallback;
   }
+}
+
+function writeOutput(resultsObj, industryByName) {
+  const out = Object.entries(resultsObj)
+    .map(([name, avgSalary]) => ({
+      name,
+      industry: industryByName.get(name) ?? "other",
+      avgSalary,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, "ja"));
+  writeFileSync(OUT_PATH, `${JSON.stringify(out, null, 2)}\n`);
+  return out.length;
+}
+
+async function main() {
+  // 既存データの industry 分類を引き継ぐ(初回のキュレーション分も含む)
+  const previous = loadJson(OUT_PATH, []);
   const industryByName = new Map(previous.map((c) => [c.name, c.industry]));
 
-  const results = new Map(); // filerName -> avgSalary(万円)
-  const today = new Date();
+  const cache = loadJson(CACHE_PATH, { scannedDates: [], results: {} });
+  const scanned = new Set(cache.scannedDates);
+  const results = cache.results; // filerName -> avgSalary(万円)
 
+  const today = new Date();
+  const targetDates = [];
   for (let i = 0; i < DAYS; i++) {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
-    const date = d.toISOString().slice(0, 10);
+    targetDates.push(d.toISOString().slice(0, 10));
+  }
+  const remaining = targetDates.filter((d) => !scanned.has(d));
+  console.log(
+    `全${DAYS}日中 残り${remaining.length}日を走査します(取得済み ${Object.keys(results).length} 社)`,
+  );
 
+  for (const date of remaining) {
     let list;
     try {
       list = await fetchJson(
@@ -95,46 +118,49 @@ async function main() {
       );
     } catch (e) {
       console.warn(`skip ${date}: ${e.message}`);
-      continue;
+      await sleep(1000);
+      continue; // 未走査のまま残す(次回リトライ)
     }
     const docs = (list.results ?? []).filter(
       (doc) =>
-        doc.docTypeCode === "120" && // 有価証券報告書
+        doc.docTypeCode === "120" &&
         doc.csvFlag === "1" &&
         doc.filerName &&
-        doc.secCode, // 上場企業(証券コードあり)のみ
+        doc.secCode,
     );
 
     for (const doc of docs) {
-      if (results.has(doc.filerName)) continue; // 直近提出分を優先
-      await sleep(200);
+      if (results[doc.filerName] !== undefined) continue;
+      await sleep(150);
       const zip = await fetchZip(
         `${BASE}/documents/${doc.docID}?type=5&Subscription-Key=${API_KEY}`,
       );
       if (!zip) continue;
       const yen = extractSalaryFromZip(zip);
       if (!yen) continue;
-      const man = Math.round(yen / 10000 / 10) * 10; // 万円・10万円丸め
-      if (man < 100 || man > 5000) continue; // 異常値ガード
-      results.set(doc.filerName, man);
+      const man = Math.round(yen / 10000 / 10) * 10;
+      if (man < 100 || man > 5000) continue;
+      results[doc.filerName] = man;
     }
 
-    if (i % 20 === 0) {
-      console.log(`${date} まで走査済み / 取得 ${results.size} 社`);
+    scanned.add(date);
+    cache.scannedDates = [...scanned];
+    cache.results = results;
+    writeFileSync(CACHE_PATH, JSON.stringify(cache));
+
+    const idx = targetDates.indexOf(date);
+    if (idx % 10 === 0) {
+      console.log(
+        `${date} 走査済み(${scanned.size}/${DAYS}日) / 取得 ${Object.keys(results).length} 社`,
+      );
     }
-    await sleep(200);
+    await sleep(150);
   }
 
-  const out = [...results.entries()]
-    .map(([name, avgSalary]) => ({
-      name,
-      industry: industryByName.get(name) ?? "other",
-      avgSalary,
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name, "ja"));
-
-  writeFileSync(OUT_PATH, `${JSON.stringify(out, null, 2)}\n`);
-  console.log(`完了: ${out.length} 社を ${OUT_PATH.pathname} に書き出しました。`);
+  const count = writeOutput(results, industryByName);
+  console.log(
+    `完了: ${scanned.size}/${DAYS}日走査済み、${count} 社を companies-data.json に書き出しました。`,
+  );
 }
 
 main().catch((e) => {

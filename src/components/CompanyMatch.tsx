@@ -1,7 +1,8 @@
 "use client";
 
 import { Buildings, LockKey, RocketLaunch } from "@phosphor-icons/react";
-import { matchCompanies, type CompanySalary } from "@/lib/companies";
+import { useEffect, useState } from "react";
+import type { CompanyMatchResult, CompanySalary } from "@/lib/companies";
 import { LINE_OFFICIAL_URL } from "@/lib/config";
 import type { SimulatorResult } from "@/lib/simulator";
 
@@ -24,10 +25,30 @@ export default function CompanyMatch({
   result: SimulatorResult;
   industry: string;
 }) {
-  const { fit, challenge } = matchCompanies(result, industry);
+  const [match, setMatch] = useState<CompanyMatchResult | null>(null);
   const gated = Boolean(LINE_OFFICIAL_URL);
 
-  if (fit.length === 0 && challenge.length === 0) return null;
+  useEffect(() => {
+    const controller = new AbortController();
+    const query = new URLSearchParams({
+      lower: String(result.lower),
+      upper: String(result.upper),
+      estimate: String(result.estimate),
+      industry,
+    });
+    fetch(`/api/companies?${query}`, { signal: controller.signal })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => data && setMatch(data))
+      .catch(() => {
+        /* 取得失敗時はセクション非表示のまま */
+      });
+    return () => controller.abort();
+  }, [result.lower, result.upper, result.estimate, industry]);
+
+  if (!match || (match.fit.length === 0 && match.challenge.length === 0)) {
+    return null;
+  }
+  const { fit, challenge } = match;
 
   return (
     <section className="mx-auto mt-16 max-w-6xl px-5 sm:px-9" aria-labelledby="company-match-title">
@@ -42,7 +63,7 @@ export default function CompanyMatch({
           あなたのレンジと、企業の現在地。
         </h2>
         <p className="mt-3 text-sm leading-7 text-slate-600">
-          診断レンジと上場企業の平均年間給与(有価証券報告書ベースの目安)を重ねて表示しています。
+          全上場企業の有価証券報告書(約3,700社)から、あなたの想定レンジに近い企業を照合しています。
         </p>
       </div>
 
@@ -107,7 +128,7 @@ export default function CompanyMatch({
       </div>
 
       <p className="mt-4 text-[11px] leading-5 text-slate-400">
-        ※平均年間給与は各社の有価証券報告書に基づく目安値(10万円単位で丸め)であり、年度・職種・年齢構成により実際の水準は異なります。最新の数値は各社の開示資料をご確認ください。掲載企業は例示であり、転職先として推奨・保証するものではありません。
+        ※平均年間給与は各社の有価証券報告書(EDINET)に基づく目安値(10万円単位で丸め)であり、年度・職種・年齢構成により実際の水準は異なります。最新の数値は各社の開示資料をご確認ください。掲載企業は例示であり、転職先として推奨・保証するものではありません。
       </p>
     </section>
   );
