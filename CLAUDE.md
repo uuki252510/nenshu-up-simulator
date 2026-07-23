@@ -29,4 +29,5 @@ Next.js 16 (App Router / Turbopack) / TypeScript / Tailwind CSS v4 / canvas-conf
 - MVP完成・本番デプロイ済み・ASP審査対応済み: 全サービスが実在サービス(＠PRO人のみA8アフィリエイト、他は公式直リンク)
 - services.ts の isAffiliate フラグでPR表記とrel=sponsoredを自動制御。提携承認が下りたら url をASPリンクに差し替え+isAffiliate:true にするだけ
 - /privacy(プライバシーポリシー)・/about(運営者情報: 合同会社Nexia名義)あり
-- 未実装: OGP画像、お問い合わせ手段の記載(必要になったら/aboutに追記)
+- SEO記事基盤あり: `src/content/blog/*.md` にMarkdownを置くだけで記事追加(/blog配下・SSG・JSON-LD・sitemap自動反映)
+- 未実装: OGP画像、お問い合わせ手段の記載(必要になったら/aboutに追記)、記事の追加(2本目以降)
