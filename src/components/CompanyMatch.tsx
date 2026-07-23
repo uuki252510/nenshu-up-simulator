@@ -21,9 +21,11 @@ function CompanyRow({ company }: { company: CompanySalary }) {
 export default function CompanyMatch({
   result,
   industry,
+  occupation,
 }: {
   result: SimulatorResult;
   industry: string;
+  occupation?: string;
 }) {
   const [match, setMatch] = useState<CompanyMatchResult | null>(null);
   const gated = Boolean(LINE_OFFICIAL_URL);
@@ -35,6 +37,7 @@ export default function CompanyMatch({
       upper: String(result.upper),
       estimate: String(result.estimate),
       industry,
+      occupation: occupation ?? "",
     });
     fetch(`/api/companies?${query}`, { signal: controller.signal })
       .then((res) => (res.ok ? res.json() : null))
@@ -43,7 +46,7 @@ export default function CompanyMatch({
         /* 取得失敗時はセクション非表示のまま */
       });
     return () => controller.abort();
-  }, [result.lower, result.upper, result.estimate, industry]);
+  }, [result.lower, result.upper, result.estimate, industry, occupation]);
 
   if (!match || (match.fit.length === 0 && match.challenge.length === 0)) {
     return null;
@@ -63,7 +66,9 @@ export default function CompanyMatch({
           あなたのレンジと、企業の現在地。
         </h2>
         <p className="mt-3 text-sm leading-7 text-slate-600">
-          全上場企業の有価証券報告書(約3,700社)から、あなたの想定レンジに近い企業を照合しています。
+          {match.poolNote
+            ? `全上場企業の有価証券報告書(約3,700社)から、${match.poolNote}を照合しています。`
+            : "全上場企業の有価証券報告書(約3,700社)から、あなたの想定レンジに近い企業を照合しています。"}
         </p>
       </div>
 
@@ -128,7 +133,10 @@ export default function CompanyMatch({
       </div>
 
       <p className="mt-4 text-[11px] leading-5 text-slate-400">
-        ※平均年間給与は各社の有価証券報告書(EDINET)に基づく目安値(10万円単位で丸め)であり、年度・職種・年齢構成により実際の水準は異なります。最新の数値は各社の開示資料をご確認ください。掲載企業は例示であり、転職先として推奨・保証するものではありません。
+        ※平均年間給与は各社の有価証券報告書(EDINET)に基づく目安値(10万円単位で丸め)であり、年度・職種・年齢構成により実際の水準は異なります。
+        {match.poolNote &&
+          "会社全体の平均値のため、専門職としての給与水準そのものではありません。"}
+        最新の数値は各社の開示資料をご確認ください。掲載企業は例示であり、転職先として推奨・保証するものではありません。
       </p>
     </section>
   );

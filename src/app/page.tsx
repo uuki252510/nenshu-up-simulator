@@ -10,6 +10,7 @@ import ForecastPreview from "@/components/ForecastPreview";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import LoadingScreen from "@/components/LoadingScreen";
+import NurseWorkStyle from "@/components/NurseWorkStyle";
 import RecommendationCard from "@/components/RecommendationCard";
 import ResultCard from "@/components/ResultCard";
 import ShareButton from "@/components/ShareButton";
@@ -80,11 +81,16 @@ export default function Home() {
               <div className="px-5 py-10 sm:px-9 lg:px-14 lg:py-14">
                 <ResultCard result={result} />
                 <StatBenchmark input={input} result={result} />
+                {input.occupation === "nurse" && <NurseWorkStyle />}
               </div>
               <ForecastPreview result={result} />
             </div>
 
-            <CompanyMatch result={result} industry={input.industry} />
+            <CompanyMatch
+              result={result}
+              industry={input.industry}
+              occupation={input.occupation}
+            />
 
             <section className="mx-auto mt-16 max-w-6xl px-5 sm:px-9">
               <div className="max-w-2xl">

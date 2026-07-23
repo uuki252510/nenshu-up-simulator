@@ -7,6 +7,7 @@ export async function GET(request: Request) {
   const upper = Number(params.get("upper"));
   const estimate = Number(params.get("estimate"));
   const industry = params.get("industry") ?? "";
+  const occupation = params.get("occupation") ?? "";
 
   if (
     !Number.isFinite(lower) ||
@@ -22,6 +23,7 @@ export async function GET(request: Request) {
     // matchCompanies は SimulatorResult のうち lower/upper/estimate のみ参照する
     { lower, upper, estimate } as Parameters<typeof matchCompanies>[0],
     industry,
+    occupation || undefined,
   );
   return NextResponse.json(result);
 }
