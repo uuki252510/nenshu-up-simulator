@@ -8,4 +8,4 @@
  *   ※LINE公式アカウントは LINE Official Account Manager から作成し、
  *     友だち追加ガイドのURLをここに貼る。
  */
-export const LINE_OFFICIAL_URL = "";
+export const LINE_OFFICIAL_URL = "https://line.me/R/ti/p/%40781ycgbd";
