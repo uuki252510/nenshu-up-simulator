@@ -114,9 +114,9 @@ export const SERVICES: Record<string, RecruitService> = {
       "調剤薬局・病院・企業に対応",
       "派遣・パートの相談もできる",
     ],
-    ctaLabel: "公式サイトを見る",
-    isAffiliate: false,
-    url: "https://www.38-8931.com/",
+    ctaLabel: "無料で登録する",
+    isAffiliate: true,
+    url: "https://px.a8.net/svt/ejp?a8mat=4B9VHE+DFG1J6+276A+5ZEMQ",
   },
   "leverwell-kaigo": {
     slug: "leverwell-kaigo",
