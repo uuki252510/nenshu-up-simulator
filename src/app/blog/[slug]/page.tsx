@@ -2,9 +2,34 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getAllPosts, getPostBySlug } from "@/lib/blog";
+
+/** キーワード・タイトルの重なりから関連記事を選ぶ */
+function getRelatedPosts(slug: string, count = 3) {
+  const current = getPostBySlug(slug);
+  if (!current) return [];
+  const terms = new Set(
+    [...current.keywords, current.title]
+      .flatMap((k) => k.split(/[\s、。・|｜]+/))
+      .filter((w) => w.length >= 2),
+  );
+  return getAllPosts()
+    .filter((p) => p.slug !== slug)
+    .map((p) => {
+      const haystack = `${p.title} ${p.keywords.join(" ")}`;
+      let score = 0;
+      terms.forEach((t) => {
+        if (haystack.includes(t)) score += 1;
+      });
+      return { post: p, score };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, count)
+    .map((r) => r.post);
+}
 
 export function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
@@ -41,6 +66,8 @@ export default async function BlogPostPage({
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
+  const related = getRelatedPosts(slug);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -52,6 +79,31 @@ export default async function BlogPostPage({
     mainEntityOfPage: `https://nenshu-up-simulator.vercel.app/blog/${post.slug}`,
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "TOP",
+        item: "https://nenshu-up-simulator.vercel.app/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "転職コラム",
+        item: "https://nenshu-up-simulator.vercel.app/blog",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: post.title,
+        item: `https://nenshu-up-simulator.vercel.app/blog/${post.slug}`,
+      },
+    ],
+  };
+
   return (
     <>
       <Header />
@@ -59,6 +111,10 @@ export default async function BlogPostPage({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
         />
         <nav className="text-[11px] text-navy-600" aria-label="パンくずリスト">
           <Link href="/" className="hover:text-gold-600">
@@ -78,7 +134,37 @@ export default async function BlogPostPage({
           </h1>
           <div className="mt-6 space-y-1">
             <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
               components={{
+                table: (props) => (
+                  <div className="mt-4 overflow-x-auto rounded-xl border border-navy-100">
+                    <table
+                      className="w-full border-collapse text-[13px] leading-relaxed"
+                      {...props}
+                    />
+                  </div>
+                ),
+                thead: (props) => (
+                  <thead className="bg-navy-50 text-navy-900" {...props} />
+                ),
+                th: (props) => (
+                  <th
+                    className="border-b border-navy-100 px-3 py-2.5 text-left font-bold"
+                    {...props}
+                  />
+                ),
+                td: (props) => (
+                  <td
+                    className="border-b border-navy-50 px-3 py-2.5 align-top text-navy-700"
+                    {...props}
+                  />
+                ),
+                blockquote: (props) => (
+                  <blockquote
+                    className="mt-3.5 rounded-r-xl border-l-2 border-gold-400 bg-navy-50/60 px-4 py-3 text-[13.5px] text-navy-700"
+                    {...props}
+                  />
+                ),
                 h2: (props) => (
                   <h2
                     className="mt-9 border-l-2 border-gold-400 pl-3 text-[17px] font-bold text-navy-900"
@@ -151,6 +237,24 @@ export default async function BlogPostPage({
             </svg>
           </Link>
         </div>
+
+        {related.length > 0 && (
+          <section className="mt-10" aria-label="関連記事">
+            <h2 className="text-[15px] font-bold text-navy-900">関連記事</h2>
+            <ul className="mt-3 space-y-2.5">
+              {related.map((r) => (
+                <li key={r.slug}>
+                  <Link
+                    href={`/blog/${r.slug}`}
+                    className="block rounded-xl border border-navy-100 bg-white px-4 py-3.5 text-[13.5px] font-semibold text-navy-800 transition-colors hover:border-gold-400 hover:text-gold-600"
+                  >
+                    {r.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <div className="mt-8">
           <Link
