@@ -223,10 +223,15 @@ export default async function BlogPostPage({
           </p>
           <Link
             href="/"
-            className="mt-4 inline-flex h-12 w-full max-w-xs items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-navy-900 to-navy-800 text-[14px] font-bold text-white transition-all hover:brightness-110"
+            className="cta-shine group mt-4 inline-flex h-12 w-full max-w-xs items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-navy-900 to-navy-800 text-[14px] font-bold text-white shadow-[0_8px_20px_-12px_rgba(15,23,42,0.5)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_32px_-14px_rgba(15,23,42,0.55)] hover:brightness-110"
           >
             年収アップ可能性を診断する
-            <svg className="size-3.5" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <svg
+              className="size-3.5 transition-transform duration-300 group-hover:translate-x-1"
+              viewBox="0 0 16 16"
+              fill="none"
+              aria-hidden="true"
+            >
               <path
                 d="m6 3.5 4.5 4.5L6 12.5"
                 stroke="currentColor"
