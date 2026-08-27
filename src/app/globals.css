@@ -136,13 +136,20 @@ body {
     transparent
   );
   transform: translateX(0) skewX(-20deg);
-  transition: transform 0.65s ease;
+  animation: cta-sweep 6s ease-in-out 1.5s infinite;
   pointer-events: none;
 }
 
-.cta-shine:hover::after,
-.cta-shine:focus-visible::after {
-  transform: translateX(340%) skewX(-20deg);
+@keyframes cta-sweep {
+  0% {
+    transform: translateX(0) skewX(-20deg);
+  }
+  14% {
+    transform: translateX(340%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(340%) skewX(-20deg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
