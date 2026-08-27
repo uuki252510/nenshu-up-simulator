@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowCounterClockwise } from "@phosphor-icons/react";
+import AdviceSection from "@/components/AdviceSection";
 import CompanyMatch from "@/components/CompanyMatch";
 import Confetti from "@/components/Confetti";
 import Disclaimer from "@/components/Disclaimer";
@@ -81,6 +82,7 @@ export default function Home() {
               <div className="px-5 py-10 sm:px-9 lg:px-14 lg:py-14">
                 <ResultCard result={result} />
                 <StatBenchmark input={input} result={result} />
+                <AdviceSection input={input} />
                 {input.occupation === "nurse" && <NurseWorkStyle />}
               </div>
               <ForecastPreview result={result} />
