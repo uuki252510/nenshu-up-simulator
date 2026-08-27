@@ -129,7 +129,7 @@ export default async function BlogPostPage({
           <time className="text-[12px] text-navy-600" dateTime={post.date}>
             {post.date.replaceAll("-", ".")}
           </time>
-          <h1 className="mt-2 text-[22px] font-bold leading-snug text-navy-900">
+          <h1 className="mt-2 text-[24px] font-bold leading-snug text-navy-900 sm:text-[26px]">
             {post.title}
           </h1>
           <div className="mt-6 space-y-1">
@@ -139,7 +139,7 @@ export default async function BlogPostPage({
                 table: (props) => (
                   <div className="mt-4 overflow-x-auto rounded-xl border border-navy-100">
                     <table
-                      className="w-full border-collapse text-[13px] leading-relaxed"
+                      className="w-full border-collapse text-[14px] leading-relaxed"
                       {...props}
                     />
                   </div>
@@ -161,37 +161,37 @@ export default async function BlogPostPage({
                 ),
                 blockquote: (props) => (
                   <blockquote
-                    className="mt-3.5 rounded-r-xl border-l-2 border-gold-400 bg-navy-50/60 px-4 py-3 text-[13.5px] text-navy-700"
+                    className="mt-3.5 rounded-r-xl border-l-2 border-gold-400 bg-navy-50/60 px-4 py-3 text-[14.5px] text-navy-700"
                     {...props}
                   />
                 ),
                 h2: (props) => (
                   <h2
-                    className="mt-9 border-l-2 border-gold-400 pl-3 text-[17px] font-bold text-navy-900"
+                    className="mt-9 border-l-2 border-gold-400 pl-3 text-[19px] font-bold text-navy-900"
                     {...props}
                   />
                 ),
                 h3: (props) => (
                   <h3
-                    className="mt-6 text-[15px] font-bold text-navy-900"
+                    className="mt-6 text-[16.5px] font-bold text-navy-900"
                     {...props}
                   />
                 ),
                 p: (props) => (
                   <p
-                    className="mt-3.5 text-[14px] leading-[1.9] text-navy-700"
+                    className="mt-3.5 text-[15.5px] leading-[1.95] text-navy-700"
                     {...props}
                   />
                 ),
                 ul: (props) => (
                   <ul
-                    className="mt-3.5 list-disc space-y-1.5 pl-5 text-[14px] leading-relaxed text-navy-700"
+                    className="mt-3.5 list-disc space-y-1.5 pl-5 text-[15.5px] leading-relaxed text-navy-700"
                     {...props}
                   />
                 ),
                 ol: (props) => (
                   <ol
-                    className="mt-3.5 list-decimal space-y-2 pl-5 text-[14px] leading-relaxed text-navy-700"
+                    className="mt-3.5 list-decimal space-y-2 pl-5 text-[15.5px] leading-relaxed text-navy-700"
                     {...props}
                   />
                 ),
